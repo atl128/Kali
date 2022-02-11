@@ -40,6 +40,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
     FFMPEG_OPTIONS = {
         'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
         'options': '-vn',
+        'executable': './assets/ffmpeg.exe'
     }
 
     ytdl = youtube_dl.YoutubeDL(YTDL_OPTIONS)
@@ -137,14 +138,11 @@ class Song:
         self.requester = source.requester
 
     def create_embed(self):
-        embed = (discord.Embed(title='Now playing',
-                               description='```css\n{0.source.title}\n```'.format(self),
-                               color=discord.Color.blurple())
-                 .add_field(name='Duration', value=self.source.duration)
-                 .add_field(name='Requested by', value=self.requester.mention)
-                 .add_field(name='Uploader', value='[{0.source.uploader}]({0.source.uploader_url})'.format(self))
-                 .add_field(name='URL', value='[Click]({0.source.url})'.format(self))
-                 .set_thumbnail(url=self.source.thumbnail))
+        embed = (discord.Embed(description='**Playing:** {0.source.title}'.format(self),
+        .add_field(name='Duration', value=self.source.duration)
+        .add_field(name='Requested by', value=self.requester.mention)
+        .add_field(name='URL', value='[Click]({0.source.url})'.format(self))
+        .set_thumbnail(url=self.source.thumbnail))
 
         return embed
 
@@ -444,7 +442,7 @@ class Music(commands.Cog):
                 song = Song(source)
 
                 await ctx.voice_state.songs.put(song)
-                await ctx.send('Enqueued {}'.format(str(source)))
+                await ctx.send('Queued {}'.format(str(source)))
 
     @_join.before_invoke
     @_play.before_invoke
@@ -455,3 +453,6 @@ class Music(commands.Cog):
         if ctx.voice_client:
             if ctx.voice_client.channel != ctx.author.voice.channel:
                 raise commands.CommandError('Bot is already in a voice channel.')
+
+def setup(bot):
+        bot.add_cog(Music(bot))

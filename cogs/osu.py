@@ -21,7 +21,7 @@ class Osu(commands.Cog):
         await ctx.send(embed=e_embed)
 
 
-    @commands.command(aliases=['t', 'top'])
+    @commands.command(aliases=['t', 'osutop'])
     async def top(self, ctx, *, username):
         e = requests.get(f"https://osu.ppy.sh/api/get_user_best?k={config.osu_key}&u={username}")
         edict = e.json()

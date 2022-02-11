@@ -1,1 +1,1 @@
-ECHO is on.
+Discord bot for personal use.
