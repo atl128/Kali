@@ -3,6 +3,7 @@ import functools
 import itertools
 import math
 import random
+import os, sys
 
 import discord
 import youtube_dl
@@ -10,7 +11,6 @@ from async_timeout import timeout
 from discord.ext import commands
 
 youtube_dl.utils.bug_reports_message = lambda: ''
-
 
 class VoiceError(Exception):
     pass
@@ -36,11 +36,13 @@ class YTDLSource(discord.PCMVolumeTransformer):
         'default_search': 'auto',
         'source_address': '0.0.0.0',
     }
-
+    
+    sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    
     FFMPEG_OPTIONS = {
         'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
         'options': '-vn',
-        'executable': './assets/ffmpeg.exe'
+        'executable': 'ffmpeg.exe'
     }
 
     ytdl = youtube_dl.YoutubeDL(YTDL_OPTIONS)
@@ -138,7 +140,7 @@ class Song:
         self.requester = source.requester
 
     def create_embed(self):
-        embed = (discord.Embed(description='**Playing:** {0.source.title}'.format(self),
+        embed = (discord.Embed(description='**Playing:** {0.source.title}'.format(self))
         .add_field(name='Duration', value=self.source.duration)
         .add_field(name='Requested by', value=self.requester.mention)
         .add_field(name='URL', value='[Click]({0.source.url})'.format(self))
@@ -290,8 +292,8 @@ class Music(commands.Cog):
 
         ctx.voice_state.voice = await destination.connect()
 
+## NOTE: Permission requirements were removed on these commands for personal sake. Add them back if you're planning to use this in a public server.
     @commands.command(name='summon')
-    @commands.has_permissions(manage_guild=True)
     async def _summon(self, ctx: commands.Context, *, channel: discord.VoiceChannel = None):
         if not channel and not ctx.author.voice:
             raise VoiceError('You are neither connected to a voice channel nor specified a channel to join.')
@@ -304,9 +306,7 @@ class Music(commands.Cog):
         ctx.voice_state.voice = await destination.connect()
 
     @commands.command(name='leave', aliases=['disconnect'])
-    @commands.has_permissions(manage_guild=True)
     async def _leave(self, ctx: commands.Context):
-
         if not ctx.voice_state.voice:
             return await ctx.send('Not connected to any voice channel.')
 
@@ -331,15 +331,12 @@ class Music(commands.Cog):
         await ctx.send(embed=ctx.voice_state.current.create_embed())
 
     @commands.command(name='pause')
-    @commands.has_permissions(manage_guild=True)
     async def _pause(self, ctx: commands.Context):
-
         if not ctx.voice_state.is_playing and ctx.voice_state.voice.is_playing():
             ctx.voice_state.voice.pause()
             await ctx.message.add_reaction('⏯')
 
     @commands.command(name='resume')
-    @commands.has_permissions(manage_guild=True)
     async def _resume(self, ctx: commands.Context):
 
         if not ctx.voice_state.is_playing and ctx.voice_state.voice.is_paused():
@@ -347,18 +344,14 @@ class Music(commands.Cog):
             await ctx.message.add_reaction('⏯')
 
     @commands.command(name='stop')
-    @commands.has_permissions(manage_guild=True)
     async def _stop(self, ctx: commands.Context):
-
         ctx.voice_state.songs.clear()
-
         if not ctx.voice_state.is_playing:
             ctx.voice_state.voice.stop()
-            await ctx.message.add_reaction('⏹')
+            ctx.message.add_reaction('⏹')
 
     @commands.command(name='skip')
     async def _skip(self, ctx: commands.Context):
-
         if not ctx.voice_state.is_playing:
             return await ctx.send('Not playing any music right now...')
 
