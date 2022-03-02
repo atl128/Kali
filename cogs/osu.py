@@ -61,13 +61,14 @@ class Osu(commands.Cog):
             misses = score['countmiss']
 
             country = gdict['country'].lower()
-                
-            desc.append(f'**{index + 1}:** {grade} **{fdict["artist"]} - {fdict["title"]}** [{fdict["version"]}] ({sr} stars) • {pp}pp, {misses} misses, set {final_diff} months ago')
-            e_embed = discord.Embed(title=f"osu!standard tops for " + gdict['username'], description="\n".join(desc))
-            # e_embed.set_image(url=f"https://flagcdn.com/h20/{country}.png")
-            e_embed.set_thumbnail(url="https://a.ppy.sh/" + gdict['user_id'])
-            e_embed.set_footer(text="Joined on " + gdict['join_date'])
-            await ctx.send(embed=e_embed)
+
+        desc.append(f'**{index + 1}:** {grade} **{fdict["artist"]} - {fdict["title"]}** [{fdict["version"]}] ({sr} stars) • {pp}pp, {misses} misses, set {final_diff} months ago')
+                 
+        e_embed = discord.Embed(title=f"osu!standard tops for " + gdict['username'], description="\n".join(desc))
+        # e_embed.set_image(url=f"https://flagcdn.com/h20/{country}.png")
+        e.set_thumbnail(url="https://a.ppy.sh/" + gdict['user_id'])
+        e_embed.set_footer(text="Joined on " + gdict['join_date'])
+        await ctx.send(embed=e_embed)
 
 def setup(bot):
     bot.add_cog(Osu(bot))
