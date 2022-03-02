@@ -61,10 +61,8 @@ class Osu(commands.Cog):
             misses = score['countmiss']
 
             country = gdict['country'].lower()
-
+                
             desc.append(f'**{index + 1}:** {grade} **{fdict["artist"]} - {fdict["title"]}** [{fdict["version"]}] ({sr} stars) • {pp}pp, {misses} misses, set {final_diff} months ago')
-
-            
             e_embed = discord.Embed(title=f"osu!standard tops for " + gdict['username'], description="\n".join(desc))
             # e_embed.set_image(url=f"https://flagcdn.com/h20/{country}.png")
             e_embed.set_thumbnail(url="https://a.ppy.sh/" + gdict['user_id'])
