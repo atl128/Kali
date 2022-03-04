@@ -70,5 +70,14 @@ class Osu(commands.Cog):
         e_embed.set_footer(text="Joined on " + gdict['join_date'])
         await ctx.send(embed=e_embed)
 
+    @commands.command(aliases=['r', 'osurecent', 'rs'])
+    async def recent(self, ctx, *, username):
+        e = requests.get(f"https://osu.ppy.sh/api/get_user_recent?k={config.osu_key}&u={username}")
+        edict = e.json()
+
+        for index, score in enumerate(edict):
+            f = requests.get(f"https://osu.ppy.sh/api/get_beatmaps?k={config.osu_key}&b={score['beatmap_id']}")
+            fdict = f.json()[0]
+            
 def setup(bot):
     bot.add_cog(Osu(bot))
