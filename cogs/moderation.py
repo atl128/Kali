@@ -10,7 +10,7 @@ class Moderation(commands.Cog):
 async def purge(ctx, amount: int = 0):
         if amount == None
             await ctx.send('You must provide an amount!', delete_after=5)
-        elif amount == 0:
+        else if amount == 0:
             await ctx.send('Amount must be more than 0.', delete_after=5)
         else:
             await ctx.message.delete()
